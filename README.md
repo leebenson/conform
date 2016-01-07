@@ -1,11 +1,10 @@
 # Santize library for Go structs (golang)
----------------------------------------
 
 Trim, sanitize, and modify struct string fields in place, based on tags.
 
 Turns this...
 
-```
+``` go
 type Person struct {
 	FirstName string `sanitize:"name"`
 	LastName  string `sanitize:"ucfirst,trim"`
@@ -36,7 +35,7 @@ sanitize.Strings(&p)
 
 Into this...
 
-```
+``` go
 p2 := p1
 sanitize.Strings(&p2)
 
@@ -56,7 +55,6 @@ sanitize.Strings(&p2)
 ```
 
 ## Why?
----------------------------------------
 
 Sanitize helps you fix and format user strings quickly, without writing functions.
 
@@ -67,7 +65,6 @@ Use it for names, e-mail addresses, URL slugs, or any other form field where for
 Sanitize doesn't attempt any kind of validation on your fields. Check out [govalidator](https://github.com/asaskevich/govalidator).
 
 ## How to use
----------------------------------------
 
 Grab the package with:
 
@@ -75,7 +72,7 @@ Grab the package with:
 
 Here's an example that formats e-mail addresses:
 
-```
+``` go
 package main
 
 import (
@@ -98,11 +95,10 @@ func main() {
 ```
 
 ## Using with Gorilla Schema
----------------------------------------
 
 Just add a `sanitize` tag along with your Gorilla `schema` tags:
 
-```
+``` go
 import (
 		"github.com/gorilla/schema"
 		"github.com/leebenson/sanitize"
@@ -126,7 +122,6 @@ func ProcessNewUser(r *http.Request) error {
 ```
 
 ## Tags
----------------------------------------
 
 You can use multiple tags in the format of `sanitize:"tag1,tag2"`
 
@@ -179,8 +174,7 @@ Trims, uppercases the first character, lowercases the rest. Example: ` JOHN ` ->
 ---------------------------------------
 Trims and lowercases the string.  Example: `UNSIGHTLY-EMAIL@EXamPLE.com ` -> `unsightly-email@example.com`
 
-### LICENSE
----------------------------------------
+### LICENSE
 
 The MIT License (MIT)
 
