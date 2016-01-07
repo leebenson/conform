@@ -72,7 +72,7 @@ And import in the usual way in your Go app:
 
 `import "github.com/leebenson/sanitize"`
 
-Add a `sanitize` tag to your structs, for all of the string fields that you want Sanitize to work on. Add the name of the tag in double quotes, and separate multiple tags with commas. Example: `sanitize:"trim,lowercase"`
+Add a `sanitize` tag to your structs, for all of the string fields that you want Sanitize to transform. Add the name of the transform (known as the "tag") in double quotes, and separate multiple tags with commas. Example: `sanitize:"trim,lowercase"`
 
 To format in place, pass your struct pointer to `sanitize.Strings`.
 
