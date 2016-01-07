@@ -84,7 +84,7 @@ type UserForm struct {
 
 func main() {
 	input := UserForm{
-		Email: "   POORLYFormaTTED@EXAMPlE.COM  "
+		Email: "   POORLYFormaTTED@EXAMPlE.COM  ",
 	}
 	sanitize.Strings(&input) // <-- pass in a pointer to your struct
 	fmt.Println(input.Email) // prints "poorlyformatted@example.com"
