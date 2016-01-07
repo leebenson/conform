@@ -1,5 +1,4 @@
-# Conform (go, golang)
-# keeps user input in check
+# Conform- keep user input in check (go, golang)
 
 Trim, sanitize, and modify struct string fields in place, based on tags.
 
