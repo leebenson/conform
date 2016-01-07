@@ -136,6 +136,9 @@ func ProcessNewUser(r *http.Request) error {
 
 ```
 
+## Godoc
+See the [public API / exported methods on Godoc](https://godoc.org/github.com/leebenson/sanitize).
+
 ## Tags
 
 You can use multiple tags in the format of `sanitize:"tag1,tag2"`
