@@ -97,26 +97,33 @@ func main() {
 Just add a `sanitize` tag along with your Gorilla `schema` tags:
 
 ``` go
+// ...
+
 import (
-		"github.com/gorilla/schema"
-		"github.com/leebenson/sanitize"
+	"net/http"
+
+	"github.com/gorilla/schema"
+	"github.com/leebenson/sanitize"
 )
 
 // the struct that will be filled from the post request...
 type newUserForm struct {
-	FirstName 		string	`schema:"firstName",sanitize:"name"`
-	Email			string	`schema:"emailAddress",sanitize:"email"`
-	Password 		string	`schema:"password"` // <-- no change? no tag
-	Dob				string	`schema:"dateOfBirth"` // <-- non-strings ignored by Sanitize
+	FirstName string `schema:"firstName",sanitize:"name"`
+	Email     string `schema:"emailAddress",sanitize:"email"`
+	Password  string `schema:"password"`    // <-- no change? no tag
+	Dob       string `schema:"dateOfBirth"` // <-- non-strings ignored by Sanitize
 }
 
 // ProcessNewUser attempts to register a new user
 func ProcessNewUser(r *http.Request) error {
 	form := new(newUserForm)
 	schema.NewDecoder().Decode(form, r.PostForm) // <-- Gorilla Schema
-	sanitize.Strings(form) <-- Sanitize.  Pass in the same pointer that Schema used
+	sanitize.Strings(form)                       // <-- Sanitize.  Pass in the same pointer that Schema used
 	// ...
 }
+
+// HTTP handlers, etc...
+
 ```
 
 ## Tags
