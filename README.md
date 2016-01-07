@@ -64,9 +64,19 @@ Sanitize doesn't attempt any kind of validation on your fields. Check out [goval
 
 ## How to use
 
-Grab the package with:
+Grab the package from the command line with:
 
 `go get github.com/leebenson/sanitize`
+
+And import in the usual way in your Go app:
+
+`import "github.com/leebenson/sanitize"`
+
+Add a `sanitize` tag to your structs, for all of the string fields that you want Sanitize to work on. Add the name of the tag in double quotes, and separate multiple tags with commas. Example: `sanitize:"trim,lowercase"`
+
+To format in place, pass your struct pointer to `sanitize.Strings`.
+
+**Note: your struct will be edited _in place_. This will OVERWRITE any data that is already stored in your string fields.**
 
 Here's an example that formats e-mail addresses:
 
