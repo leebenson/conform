@@ -34,8 +34,8 @@ p1 := Person{
 Into this...
 
 ``` go
-p2 := p1 <-- copy the Person struct into a new one, to see the difference
-sanitize.Strings(&p2) <-- this does the work
+p2 := p1 // <-- copy the Person struct into a new one, to see the difference
+sanitize.Strings(&p2) // <-- this does the work
 
 /*
 	p1 (left) vs. p2 (right)
