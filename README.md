@@ -60,7 +60,7 @@ If you do form processing with [Gorilla Schema](http://www.gorillatoolkit.org/pk
 
 Use it for names, e-mail addresses, URL slugs, or any other form field where formatting matters.
 
-Conform doesn't attempt any kind of validation on your fields. Check out [govalidator](https://github.com/asaskevich/govalidator) for a slew of common validation funcs, or [validator](https://github.com/go-playground/validator) which is an flexible swiss-army knife for validating pretty much any kind of data you can imagine. Both have struct tag syntax and can be used with conform.
+Conform doesn't attempt any kind of validation on your fields. Check out [govalidator](https://github.com/asaskevich/govalidator) for a slew of common validation funcs, or [validator](https://github.com/go-playground/validator) which is an uber-flexible swiss-army knife for validating pretty much any kind of data you can imagine. Both have struct tag syntax and can be used with conform.
 
 ## How to use
 
