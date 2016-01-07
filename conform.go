@@ -1,4 +1,4 @@
-package sanitize
+package conform
 
 import (
 	"bytes"
@@ -110,7 +110,7 @@ func ucFirst(s string) string {
 	return buf.String()
 }
 
-// Strings sanitizes strings based on reflection tags
+// Strings conforms strings based on reflection tags
 func Strings(s interface{}) error {
 	v := reflect.ValueOf(s)
 
@@ -126,8 +126,8 @@ func Strings(s interface{}) error {
 	for i := 0; i < r.NumField(); i++ {
 		f := r.Field(i)
 
-		// Need a `sanitize:""` Tag
-		t := f.Tag.Get("sanitize")
+		// Need a `conform:""` Tag
+		t := f.Tag.Get("conform")
 		if t == "" {
 			continue
 		}

@@ -1,4 +1,4 @@
-package sanitize
+package conform
 
 import (
 	"fmt"
@@ -59,9 +59,9 @@ func (t *testSuite) TestTrim() {
 	for i := 0; i < 10000; i++ {
 
 		var s struct {
-			nothing   string `sanitize:"trim"`
-			FirstName string `sanitize:"trim"`
-			LastName  string `sanitize:"trim"`
+			nothing   string `conform:"trim"`
+			FirstName string `conform:"trim"`
+			LastName  string `conform:"trim"`
 		}
 
 		s.FirstName = t.padding(fake.FirstName())
@@ -84,9 +84,9 @@ func (t *testSuite) TestLeftTrim() {
 	for i := 0; i < 10000; i++ {
 
 		var s struct {
-			nothing   string `sanitize:"ltrim"`
-			FirstName string `sanitize:"ltrim"`
-			LastName  string `sanitize:"ltrim"`
+			nothing   string `conform:"ltrim"`
+			FirstName string `conform:"ltrim"`
+			LastName  string `conform:"ltrim"`
 		}
 
 		s.FirstName = t.padding(fake.FirstName())
@@ -108,9 +108,9 @@ func (t *testSuite) TestRightTrim() {
 	for i := 0; i < 10000; i++ {
 
 		var s struct {
-			nothing   string `sanitize:"rtrim"`
-			FirstName string `sanitize:"rtrim"`
-			LastName  string `sanitize:"rtrim"`
+			nothing   string `conform:"rtrim"`
+			FirstName string `conform:"rtrim"`
+			LastName  string `conform:"rtrim"`
 		}
 
 		s.FirstName = t.padding(fake.FirstName())
@@ -156,7 +156,7 @@ func (t *testSuite) TestSomeChanges() {
 	for i := 0; i < 10; i++ {
 		var s struct {
 			FirstName string
-			LastName  string `sanitize:"trim"`
+			LastName  string `conform:"trim"`
 		}
 
 		fn := t.padding(fake.FirstName())
@@ -179,8 +179,8 @@ func (t *testSuite) TestLower() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			FirstName string `sanitize:"lower"`
-			LastName  string `sanitize:"lower"`
+			FirstName string `conform:"lower"`
+			LastName  string `conform:"lower"`
 		}
 		s.FirstName = strings.ToUpper(fake.FirstName())
 		s.LastName = strings.ToUpper(fake.LastName())
@@ -199,8 +199,8 @@ func (t *testSuite) TestUpper() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			FirstName string `sanitize:"upper"`
-			LastName  string `sanitize:"upper"`
+			FirstName string `conform:"upper"`
+			LastName  string `conform:"upper"`
 		}
 		s.FirstName = strings.ToLower(fake.FirstName())
 		s.LastName = strings.ToLower(fake.LastName())
@@ -219,9 +219,9 @@ func (t *testSuite) TestCamel() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			Dashes      string `sanitize:"camel"`
-			Underscores string `sanitize:"camel"`
-			Spaces      string `sanitize:"camel"`
+			Dashes      string `conform:"camel"`
+			Underscores string `conform:"camel"`
+			Spaces      string `conform:"camel"`
 		}
 		s.Dashes = fmt.Sprintf("%s-%s", fake.FirstName(), fake.LastName())
 		s.Underscores = fmt.Sprintf("%s_%s", fake.FirstName(), fake.LastName())
@@ -245,8 +245,8 @@ func (t *testSuite) TestSnake() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			Camel  string `sanitize:"snake"`
-			Spaces string `sanitize:"snake"`
+			Camel  string `conform:"snake"`
+			Spaces string `conform:"snake"`
 		}
 		s.Camel = fmt.Sprintf("%s%s", fake.FirstName(), fake.LastName())
 		s.Spaces = fmt.Sprintf("%s %s", fake.FirstName(), fake.LastName())
@@ -266,8 +266,8 @@ func (t *testSuite) TestSlug() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			Camel  string `sanitize:"slug"`
-			Spaces string `sanitize:"slug"`
+			Camel  string `conform:"slug"`
+			Spaces string `conform:"slug"`
 		}
 		s.Camel = fmt.Sprintf("%s%s", fake.FirstName(), fake.LastName())
 		s.Spaces = fmt.Sprintf("%s %s", fake.FirstName(), fake.LastName())
@@ -287,7 +287,7 @@ func (t *testSuite) TestTitle() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			FullName string `sanitize:"title"`
+			FullName string `conform:"title"`
 		}
 		s.FullName = strings.ToLower(fake.FullName())
 		Strings(&s)
@@ -302,8 +302,8 @@ func (t *testSuite) TestUpperFirst() {
 
 	for i := 0; i < 10000; i++ {
 		var s struct {
-			FirstName string `sanitize:"ucfirst"`
-			LastName  string `sanitize:"ucfirst"`
+			FirstName string `conform:"ucfirst"`
+			LastName  string `conform:"ucfirst"`
 		}
 		s.FirstName = strings.ToLower(fake.FirstName())
 		s.LastName = strings.ToLower(fake.LastName())
@@ -322,9 +322,9 @@ func (t *testSuite) TestMixed() {
 
 	for i := 0; i < 10; i++ {
 		var s struct {
-			Email     string `sanitize:"trim,lower"`
-			FirstName string `sanitize:"trim"`
-			LastName  string `sanitize:"trim"`
+			Email     string `conform:"trim,lower"`
+			FirstName string `conform:"trim"`
+			LastName  string `conform:"trim"`
 			Age       int
 			Truth     bool
 		}

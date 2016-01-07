@@ -1,4 +1,4 @@
-# Santize library for Go structs (golang)
+# Conform - guards Go structs against user input (golang)
 
 Trim, sanitize, and modify struct string fields in place, based on tags.
 
@@ -6,15 +6,15 @@ Turns this...
 
 ``` go
 type Person struct {
-	FirstName string `sanitize:"name"`
-	LastName  string `sanitize:"ucfirst,trim"`
-	Email     string `sanitize:"email"`
-	CamelCase string `sanitize:"camel"`
-	UserName  string `sanitize:"snake"`
-	Slug      string `sanitize:"slug"`
-	Blurb     string `sanitize:"title"`
-	Left      string `sanitize:"ltrim"`
-	Right     string `sanitize:"rtrim"`
+	FirstName string `conform:"name"`
+	LastName  string `conform:"ucfirst,trim"`
+	Email     string `conform:"email"`
+	CamelCase string `conform:"camel"`
+	UserName  string `conform:"snake"`
+	Slug      string `conform:"slug"`
+	Blurb     string `conform:"title"`
+	Left      string `conform:"ltrim"`
+	Right     string `conform:"rtrim"`
 }
 
 p1 := Person{
@@ -35,7 +35,7 @@ Into this...
 
 ``` go
 p2 := p1 // <-- copy the Person struct into a new one, to see the difference
-sanitize.Strings(&p2) // <-- this does the work
+conform.Strings(&p2) // <-- this does the work
 
 /*
 	p1 (left) vs. p2 (right)
@@ -54,27 +54,27 @@ sanitize.Strings(&p2) // <-- this does the work
 
 ## Why?
 
-Sanitize helps you fix and format user strings quickly, without writing functions.
+Conform helps you fix and format user strings quickly, without writing functions.
 
-If you do form processing with [Gorilla Schema](http://www.gorillatoolkit.org/pkg/schema) or similar, you probably shuttle user data into structs using tags. Adding a `sanitize` tag to your string field gives you "first pass" clean up against user input.
+If you do form processing with [Gorilla Schema](http://www.gorillatoolkit.org/pkg/schema) or similar, you probably shuttle user data into structs using tags. Adding a `conform` tag to your string field gives you "first pass" clean up against user input.
 
 Use it for names, e-mail addresses, URL slugs, or any other form field where formatting matters.
 
-Sanitize doesn't attempt any kind of validation on your fields. Check out [govalidator](https://github.com/asaskevich/govalidator).
+Conform doesn't attempt any kind of validation on your fields. Check out [govalidator](https://github.com/asaskevich/govalidator).
 
 ## How to use
 
 Grab the package from the command line with:
 
-`go get github.com/leebenson/sanitize`
+`go get github.com/leebenson/conform`
 
 And import in the usual way in your Go app:
 
-`import "github.com/leebenson/sanitize"`
+`import "github.com/leebenson/conform"`
 
-Add a `sanitize` tag to your structs, for all of the string fields that you want Sanitize to transform. Add the name of the transform (known as the "tag") in double quotes, and separate multiple tags with commas. Example: `sanitize:"trim,lowercase"`
+Add a `conform` tag to your structs, for all of the string fields that you want Conform to transform. Add the name of the transform (known as the "tag") in double quotes, and separate multiple tags with commas. Example: `conform:"trim,lowercase"`
 
-To format in place, pass your struct pointer to `sanitize.Strings`.
+To format in place, pass your struct pointer to `conform.Strings`.
 
 **Note: your struct will be edited _in place_. This will OVERWRITE any data that is already stored in your string fields.**
 
@@ -85,18 +85,18 @@ package main
 
 import (
 		"fmt"
-		"github.com/leebenson/sanitize"
+		"github.com/leebenson/conform"
 )
 
 type UserForm struct {
-	Email string `sanitize:"email"`
+	Email string `conform:"email"`
 }
 
 func main() {
 	input := UserForm{
 		Email: "   POORLYFormaTTED@EXAMPlE.COM  ",
 	}
-	sanitize.Strings(&input) // <-- pass in a pointer to your struct
+	conform.Strings(&input) // <-- pass in a pointer to your struct
 	fmt.Println(input.Email) // prints "poorlyformatted@example.com"
 }
 
@@ -104,7 +104,7 @@ func main() {
 
 ## Using with Gorilla Schema
 
-Just add a `sanitize` tag along with your Gorilla `schema` tags:
+Just add a `conform` tag along with your Gorilla `schema` tags:
 
 ``` go
 // ...
@@ -113,22 +113,22 @@ import (
 	"net/http"
 
 	"github.com/gorilla/schema"
-	"github.com/leebenson/sanitize"
+	"github.com/leebenson/conform"
 )
 
 // the struct that will be filled from the post request...
 type newUserForm struct {
-	FirstName string `schema:"firstName",sanitize:"name"`
-	Email     string `schema:"emailAddress",sanitize:"email"`
+	FirstName string `schema:"firstName",conform:"name"`
+	Email     string `schema:"emailAddress",conform:"email"`
 	Password  string `schema:"password"`    // <-- no change? no tag
-	Dob       string `schema:"dateOfBirth"` // <-- non-strings ignored by Sanitize
+	Dob       string `schema:"dateOfBirth"` // <-- non-strings ignored by conform
 }
 
 // ProcessNewUser attempts to register a new user
 func ProcessNewUser(r *http.Request) error {
 	form := new(newUserForm)
 	schema.NewDecoder().Decode(form, r.PostForm) // <-- Gorilla Schema
-	sanitize.Strings(form)                       // <-- Sanitize.  Pass in the same pointer that Schema used
+	conform.Strings(form)                       // <-- Conform.  Pass in the same pointer that Schema used
 	// ...
 }
 
@@ -137,11 +137,11 @@ func ProcessNewUser(r *http.Request) error {
 ```
 
 ## Godoc
-See the [public API / exported methods on Godoc](https://godoc.org/github.com/leebenson/sanitize).
+See the [public API / exported methods on Godoc](https://godoc.org/github.com/leebenson/conform).
 
 ## Tags
 
-You can use multiple tags in the format of `sanitize:"tag1,tag2"`
+You can use multiple tags in the format of `conform:"tag1,tag2"`
 
 ### trim
 ---------------------------------------
@@ -193,4 +193,4 @@ Trims, uppercases the first character, lowercases the rest. Example: ` JOHN ` ->
 Trims and lowercases the string.  Example: `UNSIGHTLY-EMAIL@EXamPLE.com ` -> `unsightly-email@example.com`
 
 ### LICENSE
-[MIT](https://github.com/leebenson/sanitize/blob/master/LICENSE)
+[MIT](https://github.com/leebenson/conform/blob/master/LICENSE)
