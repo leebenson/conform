@@ -186,7 +186,7 @@ Uppercases first character.  Example: `"all lower"` -> `"All lower"`
 
 ### name
 ---------------------------------------
-Trims, strips numbers and special characters (except dashes and spaces separating names), title cases. Example: `"3493€848Jo-s$%£@Ann   "` -> `"Jo-Ann"`, `"  ~~  The       Dude ~~"` -> `"The Dude"`, `"**susan**"` -> `"Susan"`, `"    hugh fearnley-whittingstall"` -> `"Hugh Fearnley-Whittingstall"`
+Trims, strips numbers and special characters (except dashes and spaces separating names), converts multiple spaces and dashes to single characters, title cases multiple names. Example: `"3493€848Jo-s$%£@Ann   "` -> `"Jo-Ann"`, `"  ~~  The       Dude ~~"` -> `"The Dude"`, `"**susan**"` -> `"Susan"`, `"    hugh fearnley-whittingstall"` -> `"Hugh Fearnley-Whittingstall"`
 
 ### email
 ---------------------------------------
@@ -196,7 +196,7 @@ Trims and lowercases the string.  Example: `"UNSIGHTLY-EMAIL@EXamPLE.com "` -> `
 ---------------------------------------
 Removes all non-numeric characters. Example: `"the price is €30,38"` -> `"3038"`
 
-_Note: The struct field will remain a string. No type conversion takes place_
+_Note: The struct field will remain a string. No type conversion takes place._
 
 ### !num
 ---------------------------------------
@@ -207,6 +207,7 @@ Removes all numbers. Example `"39472349D34a34v69e8932747"` -> `"Dave"`
 Removes non-alpha unicode characters. Example: `"!@£$%^&'()Hello 1234567890 World+[];\"` -> `"HelloWorld"`
 
 ### !alpha
+---------------------------------------
 Removes alpha unicode characters. Example: `"Everything's here but the letters!"` -> `"'    !"`
 
 ### LICENSE
