@@ -3,13 +3,25 @@ package conform
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/etgryphon/stringUp"
 )
+
+type x map[string]string
+
+var patterns = map[string]*regexp.Regexp{
+	"numbers":    regexp.MustCompile("[0-9]"),
+	"nonNumbers": regexp.MustCompile("[^0-9]"),
+	"alpha":      regexp.MustCompile("[\\pL]"),
+	"nonAlpha":   regexp.MustCompile("[^\\pL]"),
+	"name":       regexp.MustCompile("[\\p{L}]([\\p{L}|[:space:]|-]*[\\p{L}])*"),
+}
 
 func camelTo(s, sep string) string {
 	var result string
@@ -110,6 +122,36 @@ func ucFirst(s string) string {
 	return buf.String()
 }
 
+func onlyNumbers(s string) string {
+	return patterns["nonNumbers"].ReplaceAllLiteralString(s, "")
+}
+
+func stripNumbers(s string) string {
+	return patterns["numbers"].ReplaceAllLiteralString(s, "")
+}
+
+func onlyAlpha(s string) string {
+	return patterns["nonAlpha"].ReplaceAllLiteralString(s, "")
+}
+
+func stripAlpha(s string) string {
+	return patterns["alpha"].ReplaceAllLiteralString(s, "")
+}
+
+func onlyOne(s string, m []x) string {
+	for _, v := range m {
+		for f, r := range v {
+			s = regexp.MustCompile(fmt.Sprintf("%s{2,}", f)).ReplaceAllLiteralString(s, r)
+		}
+	}
+	return s
+}
+
+func formatName(s string) string {
+	first := onlyOne(strings.ToLower(s), []x{x{"[^\\pL-\\s]": ""}, x{"\\s": " "}, x{"-": "-"}})
+	return strings.Title(patterns["name"].FindString(first))
+}
+
 // Strings conforms strings based on reflection tags
 func Strings(s interface{}) error {
 	v := reflect.ValueOf(s)
@@ -167,11 +209,18 @@ func Strings(s interface{}) error {
 					case "ucfirst":
 						d = ucFirst(d)
 					case "name":
-						d = ucFirst(strings.ToLower(strings.TrimSpace(d)))
+						d = formatName(d)
 					case "email":
 						d = strings.ToLower(strings.TrimSpace(d))
+					case "num":
+						d = onlyNumbers(d)
+					case "!num":
+						d = stripNumbers(d)
+					case "alpha":
+						d = onlyAlpha(d)
+					case "!alpha":
+						d = stripAlpha(d)
 					}
-
 				}
 				n.SetString(d)
 			}

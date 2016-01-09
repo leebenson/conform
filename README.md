@@ -173,24 +173,41 @@ Converts to camel case via [stringUp](https://github.com/etgryphon/stringUp), Ex
 
 ### snake
 ---------------------------------------
-Converts to snake_case. Example: `CamelCase` -> `camel_case`, `regular string` -> `regular_string`
+Converts to snake_case. Example: `"CamelCase"` -> `"camel_case"`, `"regular string"` -> `"regular_string"`
 Special thanks to [snaker](https://github.com/serenize/snaker/) for inspiration (credited in license)
 
 ### slug
 ---------------------------------------
-Turns strings into slugs.  Example: `CamelCase` -> `camel-case`, `blog title here` -> `blog-title-here`
+Turns strings into slugs.  Example: `"CamelCase"` -> `"camel-case"`, `"blog title here"` -> `"blog-title-here"`
 
 ### ucfirst
 ---------------------------------------
-Uppercases first character.  Example: `all lower` -> `All lower`
+Uppercases first character.  Example: `"all lower"` -> `"All lower"`
 
 ### name
 ---------------------------------------
-Trims, uppercases the first character, lowercases the rest. Example: ` JOHN ` -> `John`
+Trims, strips numbers and special characters (except dashes and spaces separating names), title cases. Example: `"3493€848Jo-s$%£@Ann   "` -> `"Jo-Ann"`, `"  ~~  The       Dude ~~"` -> `"The Dude"`, `"**susan**"` -> `"Susan"`, `"    hugh fearnley-whittingstall"` -> `"Hugh Fearnley-Whittingstall"`
 
 ### email
 ---------------------------------------
-Trims and lowercases the string.  Example: `UNSIGHTLY-EMAIL@EXamPLE.com ` -> `unsightly-email@example.com`
+Trims and lowercases the string.  Example: `"UNSIGHTLY-EMAIL@EXamPLE.com "` -> `"unsightly-email@example.com"`
+
+### num
+---------------------------------------
+Removes all non-numeric characters. Example: `"the price is €30,38"` -> `"3038"`
+
+_Note: The struct field will remain a string. No type conversion takes place_
+
+### !num
+---------------------------------------
+Removes all numbers. Example `"39472349D34a34v69e8932747"` -> `"Dave"`
+
+### alpha
+---------------------------------------
+Removes non-alpha unicode characters. Example: `"!@£$%^&'()Hello 1234567890 World+[];\"` -> `"HelloWorld"`
+
+### !alpha
+Removes alpha unicode characters. Example: `"Everything's here but the letters!"` -> `"'    !"`
 
 ### LICENSE
 [MIT](https://github.com/leebenson/conform/blob/master/LICENSE)

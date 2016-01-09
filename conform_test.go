@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -37,6 +38,10 @@ func (t *testSuite) rightPadding() string {
 
 func (t *testSuite) padding(s string) string {
 	return t.leftPadding() + s + t.rightPadding()
+}
+
+func (t *testSuite) randomNumberString() string {
+	return strconv.Itoa(rand.Intn(1000000))
 }
 
 func (t *testSuite) SetupTest() {
@@ -343,6 +348,117 @@ func (t *testSuite) TestMixed() {
 			break
 		}
 	}
+}
+
+func (t *testSuite) TestNumbersInName() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Name string `conform:"name"`
+	}
+
+	fn := fake.FirstName()
+	s.Name = "3847" + fn + "49"
+	Strings(&s)
+	assert.Equal(fn, s.Name, "Name should have numbers removed")
+}
+
+func (t *testSuite) TestOnlyNumbers() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Price string `conform:"num"`
+	}
+
+	s.Price = "the price is €30,38; pay up!"
+	expected := "3038"
+	Strings(&s)
+	assert.Equal(expected, s.Price, "Price should have non-numerical digits removed")
+}
+
+func (t *testSuite) TestStripNum() {
+	assert := assert.New(t.T())
+
+	for i := 0; i < 10000; i++ {
+		var s struct {
+			Name string `conform:"!num"`
+		}
+
+		fn := fake.FirstName()
+		s.Name = t.randomNumberString() + fn + t.randomNumberString()
+		Strings(&s)
+		if ok := assert.Equal(fn, s.Name, "Name should have numbers stripped"); !ok {
+			break
+		}
+	}
+}
+
+func (t *testSuite) TestOnlyAlpha() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Title string `conform:"alpha"`
+	}
+
+	s.Title = t.randomNumberString() + "準" + t.randomNumberString() + "'!@£$従う%^&*()" + "準"
+	expected := "準従う準"
+	Strings(&s)
+	assert.Equal(expected, s.Title, "Title should strip non-alpha characters")
+}
+
+func (t *testSuite) TestStripAlpha() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Title string `conform:"!alpha"`
+	}
+
+	s.Title = "Everything's here but the letters!"
+	expected := "'    !"
+	Strings(&s)
+	assert.Equal(expected, s.Title, "Title should strip alpha characters")
+}
+
+func (t *testSuite) TestWeirdNames() {
+	assert := assert.New(t.T())
+
+	// must contain %s x 6, with any combo before/after
+	formats := []string{
+		"%s%s-%s%s-%s%s",      // squashed together
+		"    %s%s%s-%s%s%s",   // leading spaces
+		"%s%s%s-%s%s%s     ",  // trailing spaces
+		"~%s£%s$%s-%s*%s(%s)", // single special characters
+	}
+
+F:
+	for _, f := range formats {
+
+		for i := 0; i < 1000; i++ {
+			var s struct {
+				Name string `conform:"name"`
+			}
+
+			fn := fake.FirstName()
+			ln := fake.LastName()
+
+			s.Name = fmt.Sprintf(f,
+				t.randomNumberString(),
+				fn,
+				t.randomNumberString(),
+				t.randomNumberString(),
+				ln,
+				t.randomNumberString(),
+			)
+			orig := s.Name
+			Strings(&s)
+			if ok := assert.Equal(s.Name, fmt.Sprintf("%s-%s", fn, ln), "Name shouldn't have any weird characters"); !ok {
+				fmt.Println("Originally: " + orig)
+				break F
+			}
+		}
+
+	}
+
 }
 
 func TestStrings(t *testing.T) {
