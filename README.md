@@ -118,8 +118,8 @@ import (
 
 // the struct that will be filled from the post request...
 type newUserForm struct {
-	FirstName string `schema:"firstName",conform:"name"`
-	Email     string `schema:"emailAddress",conform:"email"`
+	FirstName string `schema:"firstName" conform:"name"`
+	Email     string `schema:"emailAddress" conform:"email"`
 	Password  string `schema:"password"`    // <-- no change? no tag
 	Dob       string `schema:"dateOfBirth"` // <-- non-strings ignored by conform
 }
