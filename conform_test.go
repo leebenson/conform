@@ -13,6 +13,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+type testEmbeddedStruct struct {
+	FirstName string `conform:"name"`
+}
+
 type testSuite struct {
 	suite.Suite
 	RegExTrim    *regexp.Regexp
@@ -459,6 +463,25 @@ F:
 
 	}
 
+}
+
+func (t *testSuite) TestEmbeddedStruct() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		testEmbeddedStruct
+		LastName string `conform:"name"`
+	}
+
+	fn := fake.FirstName()
+	ln := fake.LastName()
+
+	s.FirstName = t.randomNumberString() + fn + t.randomNumberString()
+	s.LastName = t.randomNumberString() + ln + t.randomNumberString()
+	Strings(&s)
+
+	assert.Equal(fn, s.FirstName, "First name should be stripped of numbers")
+	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
 }
 
 func TestStrings(t *testing.T) {

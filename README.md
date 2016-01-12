@@ -2,6 +2,8 @@
 
 Trim, sanitize, and modify struct string fields in place, based on tags.
 
+**Update Jan 12, 2016 -- Now also works with embedded structs**
+
 Turns this...
 
 ``` go

@@ -153,39 +153,25 @@ func formatName(s string) string {
 }
 
 // Strings conforms strings based on reflection tags
-func Strings(s interface{}) error {
-	v := reflect.ValueOf(s)
-
-	// Must be a pointer
-	if v.Kind().String() != "ptr" {
+func Strings(iface interface{}) error {
+	ifv := reflect.ValueOf(iface)
+	if ifv.Kind() != reflect.Ptr {
 		return errors.New("Not a pointer")
 	}
-
-	// Grab the type that the pointer points to
-	r := reflect.Indirect(v).Type()
-
-	// Range over the struct fields
-	for i := 0; i < r.NumField(); i++ {
-		f := r.Field(i)
-
-		// Need a `conform:""` Tag
-		t := f.Tag.Get("conform")
-		if t == "" {
-			continue
-		}
-
-		// Get the field by name
-		n := v.Elem().FieldByName(f.Name)
-		a := n.Addr()
-
-		// Must be an exported field
-		if a.CanInterface() {
-			switch n.Interface().(type) {
-			case string:
-				// Get the current data
-				d := n.String()
-
-				// Range over tags, and perform changes
+	ift := reflect.Indirect(ifv).Type()
+	for i := 0; i < ift.NumField(); i++ {
+		v := ift.Field(i)
+		el := ifv.Elem().FieldByName(v.Name)
+		switch el.Kind() {
+		case reflect.Struct:
+			Strings(el.Addr().Interface())
+		case reflect.String:
+			if el.CanSet() {
+				t := v.Tag.Get("conform")
+				if t == "" {
+					continue
+				}
+				d := el.String()
 				for _, split := range strings.Split(t, ",") {
 					switch split {
 					case "trim":
@@ -222,7 +208,7 @@ func Strings(s interface{}) error {
 						d = stripAlpha(d)
 					}
 				}
-				n.SetString(d)
+				el.SetString(d)
 			}
 		}
 	}
