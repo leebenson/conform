@@ -120,10 +120,10 @@ import (
 
 // the struct that will be filled from the post request...
 type newUserForm struct {
-	FirstName string `schema:"firstName" conform:"name"`
-	Email     string `schema:"emailAddress" conform:"email"`
-	Password  string `schema:"password"`    // <-- no change? no tag
-	Dob       string `schema:"dateOfBirth"` // <-- non-strings ignored by conform
+	FirstName string    `schema:"firstName" conform:"name"`
+	Email     string    `schema:"emailAddress" conform:"email"`
+	Password  string    `schema:"password"`    // <-- no tag? no change
+	Dob       time.Time `schema:"dateOfBirth"` // <-- non-strings ignored by conform
 }
 
 // ProcessNewUser attempts to register a new user
