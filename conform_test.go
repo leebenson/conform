@@ -17,6 +17,26 @@ type testEmbeddedStruct struct {
 	FirstName string `conform:"name"`
 }
 
+type testTwiceEmbeddedStruct struct {
+	testEmbeddedStruct
+	LastName string `conform:"name"`
+}
+
+func (t *testTwiceEmbeddedStruct) private1() {}
+func (t *testTwiceEmbeddedStruct) private2() {}
+func (t *testTwiceEmbeddedStruct) Public1()  {}
+func (t *testTwiceEmbeddedStruct) Public2()  {}
+
+type testThriceEmbeddedStruct struct {
+	testTwiceEmbeddedStruct
+	Email string `conform:"email"`
+}
+
+func (t *testThriceEmbeddedStruct) private1() {}
+func (t *testThriceEmbeddedStruct) private2() {}
+func (t *testThriceEmbeddedStruct) Public1()  {}
+func (t *testThriceEmbeddedStruct) Public2()  {}
+
 type testSuite struct {
 	suite.Suite
 	RegExTrim    *regexp.Regexp
@@ -482,6 +502,53 @@ func (t *testSuite) TestEmbeddedStruct() {
 
 	assert.Equal(fn, s.FirstName, "First name should be stripped of numbers")
 	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
+}
+
+func (t *testSuite) TestTwiceEmbeddedStruct() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		testTwiceEmbeddedStruct
+		Country string `conform:"trim,upper"`
+	}
+
+	fn := fake.FirstName()
+	ln := fake.LastName()
+	country := "United Kingdom"
+
+	s.FirstName = t.randomNumberString() + fn + t.randomNumberString()
+	s.LastName = t.randomNumberString() + ln + t.randomNumberString()
+	s.Country = country
+	Strings(&s)
+
+	assert.Equal(fn, s.FirstName, "First name should be stripped of numbers")
+	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
+	assert.Equal(s.Country, "UNITED KINGDOM", "Last name should be stripped of numbers")
+}
+
+func (t *testSuite) TestThriceEmbeddedStruct() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		testThriceEmbeddedStruct
+		Country string `conform:"trim,upper"`
+	}
+
+	fn := fake.FirstName()
+	ln := fake.LastName()
+	email := fake.EmailAddress()
+	country := "United Kingdom"
+
+	s.FirstName = t.randomNumberString() + fn + t.randomNumberString()
+	s.LastName = t.randomNumberString() + ln + t.randomNumberString()
+	s.Email = email
+	s.Country = country
+	Strings(&s)
+
+	assert.Equal(fn, s.FirstName, "First name should be stripped of numbers")
+	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
+	assert.Equal(strings.ToLower(email), s.Email, "E-mail address should be lowercase")
+	assert.Equal(s.Country, "UNITED KINGDOM", "Last name should be stripped of numbers")
 }
 
 func TestStrings(t *testing.T) {
