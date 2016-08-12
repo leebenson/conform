@@ -161,7 +161,7 @@ func Strings(iface interface{}) error {
 	ift := reflect.Indirect(ifv).Type()
 	for i := 0; i < ift.NumField(); i++ {
 		v := ift.Field(i)
-		el := ifv.Elem().FieldByName(v.Name)
+		el := reflect.Indirect(ifv.Elem().FieldByName(v.Name))
 		switch el.Kind() {
 		case reflect.Struct:
 			Strings(el.Addr().Interface())
