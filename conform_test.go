@@ -551,6 +551,39 @@ func (t *testSuite) TestThriceEmbeddedStructFn() {
 	assert.Equal(s.Country, "UNITED KINGDOM", "Last name should be stripped of numbers")
 }
 
+func (t *testSuite) TestSlice() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Tags []string `conform:"trim"`
+	}
+
+  s.Tags = append(s.Tags, " some")
+  s.Tags = append(s.Tags, "string ")
+
+	Strings(&s)
+
+	assert.Equal("some", s.Tags[0], "tags[0] should be trimmed")
+	assert.Equal("string", s.Tags[1], "tags[1] should be trimmed")
+}
+
+func (t *testSuite) TestSliceOfSlice() {
+  return /* @todo skip for now. */
+	assert := assert.New(t.T())
+
+	var s struct {
+		Tags [][]string `conform:"trim"`
+	}
+
+  s.Tags = append(s.Tags, []string{" some ", "other "})
+  s.Tags = append(s.Tags, []string{" string ", " beep "})
+
+	Strings(&s)
+
+	assert.Equal("some", s.Tags[0], "tags[0] should be trimmed")
+	assert.Equal("string", s.Tags[1], "tags[1] should be trimmed")
+}
+
 func TestStrings(t *testing.T) {
 	suite.Run(t, new(testSuite))
 }
