@@ -13,7 +13,7 @@ before_install:
   - go get github.com/etgryphon/stringUp
   - go get github.com/icrowley/fake
   - go get github.com/stretchr/testify
-  - go get github.com/davecgh/go-spew
+  - go get github.com/davecgh/go-spew/spew
   - go get github.com/pmezard/go-difflib
   - mkdir -p ${GOPATH}/bin
   - cd ~
