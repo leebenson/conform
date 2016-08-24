@@ -14,7 +14,7 @@ before_install:
   - go get github.com/icrowley/fake
   - go get github.com/stretchr/testify
   - go get github.com/davecgh/go-spew/spew
-  - go get github.com/pmezard/go-difflib
+  - go get github.com/pmezard/go-difflib/difflib
   - mkdir -p ${GOPATH}/bin
   - cd ~
   - curl https://glide.sh/get | sh
