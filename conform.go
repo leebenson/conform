@@ -164,19 +164,19 @@ func Strings(iface interface{}) error {
 		el := reflect.Indirect(ifv.Elem().FieldByName(v.Name))
 		switch el.Kind() {
 		case reflect.Slice:
-      if slice, ok := el.Interface().([]string); ok {
-        for i, input := range slice {
-  				tags := v.Tag.Get("conform")
-          slice[i] = transformString(input, tags)
-        }
-    		return nil
-      }
+			if slice, ok := el.Interface().([]string); ok {
+				for i, input := range slice {
+					tags := v.Tag.Get("conform")
+					slice[i] = transformString(input, tags)
+				}
+				return nil
+			}
 		case reflect.Struct:
 			Strings(el.Addr().Interface())
 		case reflect.String:
 			if el.CanSet() {
 				tags := v.Tag.Get("conform")
-        input := el.String()
+				input := el.String()
 				el.SetString(transformString(input, tags))
 			}
 		}
@@ -184,45 +184,45 @@ func Strings(iface interface{}) error {
 	return nil
 }
 
-func transformString (input, tags string) string {
-  if tags=="" {
-    return input
-  }
-  for _, split := range strings.Split(tags, ",") {
-    switch split {
-    case "trim":
-      input = strings.TrimSpace(input)
-    case "ltrim":
-      input = strings.TrimLeft(input, " ")
-    case "rtrim":
-      input = strings.TrimRight(input, " ")
-    case "lower":
-      input = strings.ToLower(input)
-    case "upper":
-      input = strings.ToUpper(input)
-    case "title":
-      input = strings.Title(input)
-    case "camel":
-      input = stringUp.CamelCase(input)
-    case "snake":
-      input = camelTo(stringUp.CamelCase(input), "_")
-    case "slug":
-      input = camelTo(stringUp.CamelCase(input), "-")
-    case "ucfirst":
-      input = ucFirst(input)
-    case "name":
-      input = formatName(input)
-    case "email":
-      input = strings.ToLower(strings.TrimSpace(input))
-    case "num":
-      input = onlyNumbers(input)
-    case "!num":
-      input = stripNumbers(input)
-    case "alpha":
-      input = onlyAlpha(input)
-    case "!alpha":
-      input = stripAlpha(input)
-    }
-  }
-  return input
+func transformString(input, tags string) string {
+	if tags == "" {
+		return input
+	}
+	for _, split := range strings.Split(tags, ",") {
+		switch split {
+		case "trim":
+			input = strings.TrimSpace(input)
+		case "ltrim":
+			input = strings.TrimLeft(input, " ")
+		case "rtrim":
+			input = strings.TrimRight(input, " ")
+		case "lower":
+			input = strings.ToLower(input)
+		case "upper":
+			input = strings.ToUpper(input)
+		case "title":
+			input = strings.Title(input)
+		case "camel":
+			input = stringUp.CamelCase(input)
+		case "snake":
+			input = camelTo(stringUp.CamelCase(input), "_")
+		case "slug":
+			input = camelTo(stringUp.CamelCase(input), "-")
+		case "ucfirst":
+			input = ucFirst(input)
+		case "name":
+			input = formatName(input)
+		case "email":
+			input = strings.ToLower(strings.TrimSpace(input))
+		case "num":
+			input = onlyNumbers(input)
+		case "!num":
+			input = stripNumbers(input)
+		case "alpha":
+			input = onlyAlpha(input)
+		case "!alpha":
+			input = stripAlpha(input)
+		}
+	}
+	return input
 }

@@ -558,8 +558,8 @@ func (t *testSuite) TestSlice() {
 		Tags []string `conform:"trim"`
 	}
 
-  s.Tags = append(s.Tags, " some")
-  s.Tags = append(s.Tags, "string ")
+	s.Tags = append(s.Tags, " some")
+	s.Tags = append(s.Tags, "string ")
 
 	Strings(&s)
 
@@ -568,15 +568,15 @@ func (t *testSuite) TestSlice() {
 }
 
 func (t *testSuite) TestSliceOfSlice() {
-  return /* @todo skip for now. */
+	return /* @todo skip for now. */
 	assert := assert.New(t.T())
 
 	var s struct {
 		Tags [][]string `conform:"trim"`
 	}
 
-  s.Tags = append(s.Tags, []string{" some ", "other "})
-  s.Tags = append(s.Tags, []string{" string ", " beep "})
+	s.Tags = append(s.Tags, []string{" some ", "other "})
+	s.Tags = append(s.Tags, []string{" string ", " beep "})
 
 	Strings(&s)
 
