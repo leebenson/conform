@@ -163,54 +163,66 @@ func Strings(iface interface{}) error {
 		v := ift.Field(i)
 		el := reflect.Indirect(ifv.Elem().FieldByName(v.Name))
 		switch el.Kind() {
+		case reflect.Slice:
+			if slice, ok := el.Interface().([]string); ok {
+				for i, input := range slice {
+					tags := v.Tag.Get("conform")
+					slice[i] = transformString(input, tags)
+				}
+				return nil
+			}
 		case reflect.Struct:
 			Strings(el.Addr().Interface())
 		case reflect.String:
 			if el.CanSet() {
-				t := v.Tag.Get("conform")
-				if t == "" {
-					continue
-				}
-				d := el.String()
-				for _, split := range strings.Split(t, ",") {
-					switch split {
-					case "trim":
-						d = strings.TrimSpace(d)
-					case "ltrim":
-						d = strings.TrimLeft(d, " ")
-					case "rtrim":
-						d = strings.TrimRight(d, " ")
-					case "lower":
-						d = strings.ToLower(d)
-					case "upper":
-						d = strings.ToUpper(d)
-					case "title":
-						d = strings.Title(d)
-					case "camel":
-						d = stringUp.CamelCase(d)
-					case "snake":
-						d = camelTo(stringUp.CamelCase(d), "_")
-					case "slug":
-						d = camelTo(stringUp.CamelCase(d), "-")
-					case "ucfirst":
-						d = ucFirst(d)
-					case "name":
-						d = formatName(d)
-					case "email":
-						d = strings.ToLower(strings.TrimSpace(d))
-					case "num":
-						d = onlyNumbers(d)
-					case "!num":
-						d = stripNumbers(d)
-					case "alpha":
-						d = onlyAlpha(d)
-					case "!alpha":
-						d = stripAlpha(d)
-					}
-				}
-				el.SetString(d)
+				tags := v.Tag.Get("conform")
+				input := el.String()
+				el.SetString(transformString(input, tags))
 			}
 		}
 	}
 	return nil
+}
+
+func transformString(input, tags string) string {
+	if tags == "" {
+		return input
+	}
+	for _, split := range strings.Split(tags, ",") {
+		switch split {
+		case "trim":
+			input = strings.TrimSpace(input)
+		case "ltrim":
+			input = strings.TrimLeft(input, " ")
+		case "rtrim":
+			input = strings.TrimRight(input, " ")
+		case "lower":
+			input = strings.ToLower(input)
+		case "upper":
+			input = strings.ToUpper(input)
+		case "title":
+			input = strings.Title(input)
+		case "camel":
+			input = stringUp.CamelCase(input)
+		case "snake":
+			input = camelTo(stringUp.CamelCase(input), "_")
+		case "slug":
+			input = camelTo(stringUp.CamelCase(input), "-")
+		case "ucfirst":
+			input = ucFirst(input)
+		case "name":
+			input = formatName(input)
+		case "email":
+			input = strings.ToLower(strings.TrimSpace(input))
+		case "num":
+			input = onlyNumbers(input)
+		case "!num":
+			input = stripNumbers(input)
+		case "alpha":
+			input = onlyAlpha(input)
+		case "!alpha":
+			input = stripAlpha(input)
+		}
+	}
+	return input
 }

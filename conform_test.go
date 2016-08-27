@@ -13,29 +13,29 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type testEmbeddedStruct struct {
+type TestEmbeddedStruct struct {
 	FirstName string `conform:"name"`
 }
 
-type testTwiceEmbeddedStruct struct {
-	testEmbeddedStruct
+type TestTwiceEmbeddedStruct struct {
+	TestEmbeddedStruct
 	LastName string `conform:"name"`
 }
 
-func (t *testTwiceEmbeddedStruct) private1() {}
-func (t *testTwiceEmbeddedStruct) private2() {}
-func (t *testTwiceEmbeddedStruct) Public1()  {}
-func (t *testTwiceEmbeddedStruct) Public2()  {}
+func (t *TestTwiceEmbeddedStruct) private1() {}
+func (t *TestTwiceEmbeddedStruct) private2() {}
+func (t *TestTwiceEmbeddedStruct) Public1()  {}
+func (t *TestTwiceEmbeddedStruct) Public2()  {}
 
-type testThriceEmbeddedStruct struct {
-	testTwiceEmbeddedStruct
+type TestThriceEmbeddedStruct struct {
+	TestTwiceEmbeddedStruct
 	Email string `conform:"email"`
 }
 
-func (t *testThriceEmbeddedStruct) private1() {}
-func (t *testThriceEmbeddedStruct) private2() {}
-func (t *testThriceEmbeddedStruct) Public1()  {}
-func (t *testThriceEmbeddedStruct) Public2()  {}
+func (t *TestThriceEmbeddedStruct) private1() {}
+func (t *TestThriceEmbeddedStruct) private2() {}
+func (t *TestThriceEmbeddedStruct) Public1()  {}
+func (t *TestThriceEmbeddedStruct) Public2()  {}
 
 type testSuite struct {
 	suite.Suite
@@ -485,11 +485,11 @@ F:
 
 }
 
-func (t *testSuite) TestEmbeddedStruct() {
+func (t *testSuite) TestEmbeddedStructfn() {
 	assert := assert.New(t.T())
 
 	var s struct {
-		testEmbeddedStruct
+		TestEmbeddedStruct
 		LastName string `conform:"name"`
 	}
 
@@ -504,11 +504,11 @@ func (t *testSuite) TestEmbeddedStruct() {
 	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
 }
 
-func (t *testSuite) TestTwiceEmbeddedStruct() {
+func (t *testSuite) TestTwiceEmbeddedStructFn() {
 	assert := assert.New(t.T())
 
 	var s struct {
-		testTwiceEmbeddedStruct
+		TestTwiceEmbeddedStruct
 		Country string `conform:"trim,upper"`
 	}
 
@@ -526,11 +526,11 @@ func (t *testSuite) TestTwiceEmbeddedStruct() {
 	assert.Equal(s.Country, "UNITED KINGDOM", "Last name should be stripped of numbers")
 }
 
-func (t *testSuite) TestThriceEmbeddedStruct() {
+func (t *testSuite) TestThriceEmbeddedStructFn() {
 	assert := assert.New(t.T())
 
 	var s struct {
-		testThriceEmbeddedStruct
+		TestThriceEmbeddedStruct
 		Country string `conform:"trim,upper"`
 	}
 
@@ -549,6 +549,39 @@ func (t *testSuite) TestThriceEmbeddedStruct() {
 	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
 	assert.Equal(strings.ToLower(email), s.Email, "E-mail address should be lowercase")
 	assert.Equal(s.Country, "UNITED KINGDOM", "Last name should be stripped of numbers")
+}
+
+func (t *testSuite) TestSlice() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Tags []string `conform:"trim"`
+	}
+
+	s.Tags = append(s.Tags, " some")
+	s.Tags = append(s.Tags, "string ")
+
+	Strings(&s)
+
+	assert.Equal("some", s.Tags[0], "tags[0] should be trimmed")
+	assert.Equal("string", s.Tags[1], "tags[1] should be trimmed")
+}
+
+func (t *testSuite) TestSliceOfSlice() {
+	return /* @todo skip for now. */
+	assert := assert.New(t.T())
+
+	var s struct {
+		Tags [][]string `conform:"trim"`
+	}
+
+	s.Tags = append(s.Tags, []string{" some ", "other "})
+	s.Tags = append(s.Tags, []string{" string ", " beep "})
+
+	Strings(&s)
+
+	assert.Equal("some", s.Tags[0], "tags[0] should be trimmed")
+	assert.Equal("string", s.Tags[1], "tags[1] should be trimmed")
 }
 
 func TestStrings(t *testing.T) {
