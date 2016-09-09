@@ -164,7 +164,12 @@ func Strings(iface interface{}) error {
 		el := reflect.Indirect(ifv.Elem().FieldByName(v.Name))
 		switch el.Kind() {
 		case reflect.Struct:
-			Strings(el.Addr().Interface())
+			// need to check for unexported fields to prevent panic.
+			// for example, if there is a time.Time field, this loops through
+			// the struct, but all the fields in the struct are private
+			if v.PkgPath == "" {
+				Strings(el.Addr().Interface())
+			}
 		case reflect.String:
 			if el.CanSet() {
 				t := v.Tag.Get("conform")
