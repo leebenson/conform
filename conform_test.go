@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/icrowley/fake"
 	"github.com/stretchr/testify/assert"
@@ -586,4 +587,12 @@ func (t *testSuite) TestSliceOfSlice() {
 
 func TestStrings(t *testing.T) {
 	suite.Run(t, new(testSuite))
+}
+
+// the test must not panic when a non-unexported property is encountered
+func (t *testSuite) TestNonReflectableProperty() {
+	var s struct {
+		date time.Time
+	}
+	Strings(&s)
 }
