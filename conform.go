@@ -164,18 +164,17 @@ func Strings(iface interface{}) error {
 		el := reflect.Indirect(ifv.Elem().FieldByName(v.Name))
 		switch el.Kind() {
 		case reflect.Slice:
-			if slice, ok := el.Interface().([]string); ok {
-				for i, input := range slice {
-					tags := v.Tag.Get("conform")
-					slice[i] = transformString(input, tags)
+			if el.CanInterface() {
+				if slice, ok := el.Interface().([]string); ok {
+					for i, input := range slice {
+						tags := v.Tag.Get("conform")
+						slice[i] = transformString(input, tags)
+					}
+					return nil
 				}
-				return nil
 			}
 		case reflect.Struct:
-			// need to check for unexported fields to prevent panic.
-			// for example, if there is a time.Time field, this loops through
-			// the struct, but all the fields in the struct are private
-			if v.PkgPath == "" {
+			if el.CanAddr() && el.Addr().CanInterface() {
 				Strings(el.Addr().Interface())
 			}
 		case reflect.String:
