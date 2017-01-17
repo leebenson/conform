@@ -171,6 +171,12 @@ func Strings(iface interface{}) error {
 						slice[i] = transformString(input, tags)
 					}
 					return nil
+				} else {
+					val := reflect.ValueOf(el.Interface())
+					for i := 0; i < val.Len(); i++ {
+						Strings(val.Index(i).Addr().Interface())
+					}
+					return nil
 				}
 			}
 		case reflect.Struct:
