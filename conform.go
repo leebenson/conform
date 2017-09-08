@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"html/template"
 	"reflect"
 	"regexp"
 	"strings"
@@ -232,6 +233,10 @@ func transformString(input, tags string) string {
 			input = onlyAlpha(input)
 		case "!alpha":
 			input = stripAlpha(input)
+		case "!html":
+			input = template.HTMLEscapeString(input)
+		case "!js":
+			input = template.JSEscapeString(input)
 		}
 	}
 	return input
