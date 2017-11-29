@@ -548,7 +548,8 @@ func (t *testSuite) TestThriceEmbeddedStructFn() {
 
 	assert.Equal(fn, s.FirstName, "First name should be stripped of numbers")
 	assert.Equal(ln, s.LastName, "Last name should be stripped of numbers")
-	assert.Equal(strings.ToLower(email), s.Email, "E-mail address should be lowercase")
+	assert.Equal(emailLocalPart(email), emailLocalPart(s.Email), "E-mail local part should not change")
+	assert.Equal(strings.ToLower(emailDomainPart(email)), emailDomainPart(s.Email), "E-mail domain part should be lowercase")
 	assert.Equal(s.Country, "UNITED KINGDOM", "Last name should be stripped of numbers")
 }
 

@@ -24,6 +24,28 @@ var patterns = map[string]*regexp.Regexp{
 	"name":       regexp.MustCompile("[\\p{L}]([\\p{L}|[:space:]|-]*[\\p{L}])*"),
 }
 
+// a valid email will only have one "@", but let's treat the last "@" as the domain part separator
+func emailLocalPart(s string) string {
+	i := strings.LastIndex(s, "@")
+	if i == -1 {
+		return s
+	}
+	return s[0:i]
+}
+
+func emailDomainPart(s string) string {
+	i := strings.LastIndex(s, "@")
+	if i == -1 {
+		return ""
+	}
+	return s[i+1:]
+}
+
+func email(s string) string {
+	// According to rfc5321, "The local-part of a mailbox MUST BE treated as case sensitive"
+	return emailLocalPart(s) + "@" + strings.ToLower(emailDomainPart(s))
+}
+
 func camelTo(s, sep string) string {
 	var result string
 	var words []string
@@ -222,7 +244,7 @@ func transformString(input, tags string) string {
 		case "name":
 			input = formatName(input)
 		case "email":
-			input = strings.ToLower(strings.TrimSpace(input))
+			input = email(strings.TrimSpace(input))
 		case "num":
 			input = onlyNumbers(input)
 		case "!num":
