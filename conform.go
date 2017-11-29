@@ -244,7 +244,7 @@ func transformString(input, tags string) string {
 		case "name":
 			input = formatName(input)
 		case "email":
-			input = email(input)
+			input = email(strings.TrimSpace(input))
 		case "num":
 			input = onlyNumbers(input)
 		case "!num":
