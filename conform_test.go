@@ -453,6 +453,9 @@ func (t *testSuite) TestWeirdNames() {
 		"    %s%s%s-%s%s%s",   // leading spaces
 		"%s%s%s-%s%s%s     ",  // trailing spaces
 		"~%s£%s$%s-%s*%s(%s)", // single special characters
+		"%s'%s%s-%s%s''%s", // name with apostrophes
+		"%s     %s%s-%s%s%s", // multiple whitespaces
+		"%s%s%s  -  %s%s%s", // name with whitespace enclosed hyphen
 	}
 
 F:

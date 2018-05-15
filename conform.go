@@ -21,7 +21,7 @@ var patterns = map[string]*regexp.Regexp{
 	"nonNumbers": regexp.MustCompile("[^0-9]"),
 	"alpha":      regexp.MustCompile("[\\pL]"),
 	"nonAlpha":   regexp.MustCompile("[^\\pL]"),
-	"name":       regexp.MustCompile("[\\p{L}]([\\p{L}|[:space:]|-]*[\\p{L}])*"),
+	"name":       regexp.MustCompile("[\\p{L}]([\\p{L}|[:space:]|\\-|\\']*[\\p{L}])*"),
 }
 
 // a valid email will only have one "@", but let's treat the last "@" as the domain part separator
@@ -164,14 +164,20 @@ func stripAlpha(s string) string {
 func onlyOne(s string, m []x) string {
 	for _, v := range m {
 		for f, r := range v {
-			s = regexp.MustCompile(fmt.Sprintf("%s{2,}", f)).ReplaceAllLiteralString(s, r)
+			s = regexp.MustCompile(fmt.Sprintf("%s", f)).ReplaceAllLiteralString(s, r)
 		}
 	}
 	return s
 }
 
 func formatName(s string) string {
-	first := onlyOne(strings.ToLower(s), []x{x{"[^\\pL-\\s]": ""}, x{"\\s": " "}, x{"-": "-"}})
+	first := onlyOne(strings.ToLower(s), []x{
+		{"[^\\pL-\\s']": ""}, // cut off everything except [ alpha, hyphen, whitespace, apostrophe]
+		{"\\s{2,}": " "}, // trim more than two whitespaces to one
+		{"-{2,}": "-"}, // trim more than two hyphens to one
+		{"'{2,}": "'"}, // trim more than two apostrophes to one
+		{"( )*-( )*": "-"}, // trim enclosing whitespaces around hyphen
+	})
 	return strings.Title(patterns["name"].FindString(first))
 }
 
