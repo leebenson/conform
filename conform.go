@@ -16,6 +16,10 @@ import (
 
 type x map[string]string
 
+type sanitizer func(string) string
+
+var sanitizers = map[string]sanitizer{}
+
 var patterns = map[string]*regexp.Regexp{
 	"numbers":    regexp.MustCompile("[0-9]"),
 	"nonNumbers": regexp.MustCompile("[^0-9]"),
@@ -266,7 +270,16 @@ func transformString(input, tags string) string {
 			input = template.HTMLEscapeString(input)
 		case "!js":
 			input = template.JSEscapeString(input)
+		default:
+			if s, ok := sanitizers[split]; ok {
+				input = s(input)
+			}
 		}
 	}
 	return input
+}
+
+// AddSanitizer associates a sanitizer with a key, which can be used in a Struct tag
+func AddSanitizer(key string, s sanitizer) {
+	sanitizers[key] = s
 }
