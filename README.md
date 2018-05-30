@@ -212,5 +212,9 @@ Removes non-alpha unicode characters. Example: `"!@£$%^&'()Hello 1234567890 Wor
 ---------------------------------------
 Removes alpha unicode characters. Example: `"Everything's here but the letters!"` -> `"'    !"`
 
+### redact
+---------------------------------------
+Replace with REDACTED. Example: `"Everything's here"` -> `"REDACTED"`
+
 ### LICENSE
 [MIT](https://github.com/leebenson/conform/blob/master/LICENSE)
