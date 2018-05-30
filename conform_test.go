@@ -418,6 +418,19 @@ func (t *testSuite) TestStripNum() {
 	}
 }
 
+func (t *testSuite) TestRedact() {
+	assert := assert.New(t.T())
+
+	var s struct {
+		Secret string `conform:"redact"`
+	}
+
+	s.Secret = "secret"
+	expected := "REDACTED"
+	Strings(&s)
+	assert.Equal(expected, s.Secret, "Secret should be redacted")
+}
+
 func (t *testSuite) TestOnlyAlpha() {
 	assert := assert.New(t.T())
 
@@ -453,9 +466,9 @@ func (t *testSuite) TestWeirdNames() {
 		"    %s%s%s-%s%s%s",   // leading spaces
 		"%s%s%s-%s%s%s     ",  // trailing spaces
 		"~%s£%s$%s-%s*%s(%s)", // single special characters
-		"%s'%s%s-%s%s''%s", // name with apostrophes
-		"%s     %s%s-%s%s%s", // multiple whitespaces
-		"%s%s%s  -  %s%s%s", // name with whitespace enclosed hyphen
+		"%s'%s%s-%s%s''%s",    // name with apostrophes
+		"%s     %s%s-%s%s%s",  // multiple whitespaces
+		"%s%s%s  -  %s%s%s",   // name with whitespace enclosed hyphen
 	}
 
 F:
