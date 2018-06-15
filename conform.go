@@ -266,6 +266,8 @@ func transformString(input, tags string) string {
 			input = template.HTMLEscapeString(input)
 		case "!js":
 			input = template.JSEscapeString(input)
+		case "redact":
+			input = "REDACTED"
 		}
 	}
 	return input
