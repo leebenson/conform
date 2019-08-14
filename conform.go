@@ -213,6 +213,19 @@ func Strings(iface interface{}) error {
 					}
 				}
 			}
+		case reflect.Map:
+			if el.CanInterface() {
+				val := reflect.ValueOf(el.Interface())
+				for _, key := range val.MapKeys() {
+					mapValue := val.MapIndex(key)
+					mapValuePtr := reflect.New(mapValue.Type())
+					mapValuePtr.Elem().Set(mapValue)
+					if mapValuePtr.Elem().CanAddr() {
+						Strings(mapValuePtr.Elem().Addr().Interface())
+					}
+					val.SetMapIndex(key, reflect.Indirect(mapValuePtr))
+				}
+			}
 		case reflect.Struct:
 			if el.CanAddr() && el.Addr().CanInterface() {
 				Strings(el.Addr().Interface())
