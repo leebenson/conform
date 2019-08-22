@@ -600,3 +600,25 @@ func (t *testSuite) TestNonReflectableProperty() {
 	}
 	Strings(&s)
 }
+
+func (t *testSuite) TestMap() {
+	assert := assert.New(t.T())
+
+	type Cat struct {
+		Name string `conform:"trim"`
+	}
+	type Bear struct {
+		Catmap map[string]Cat
+	}
+	s := Bear{
+		Catmap: map[string]Cat{
+			"cat1": Cat{
+				Name: "  pickles  ",
+			},
+		},
+	}
+
+	Strings(&s)
+	assert.Equal("pickles", s.Catmap["cat1"].Name, "s.StructMap[cat1].Name should be trimmed")
+
+}
