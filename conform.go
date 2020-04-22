@@ -228,7 +228,7 @@ func Strings(iface interface{}) error {
 			}
 		case reflect.Struct:
 			if el.CanAddr() && el.Addr().CanInterface() {
-				// To handle "sql.NullString" we can assume that tags are added to field of type struct rather tan string
+				// To handle "sql.NullString" we can assume that tags are added to a field of type struct rather than string
 				if tags := v.Tag.Get("conform"); tags != "" && el.CanSet() {
 					field := el.FieldByName("String")
 					str := field.String()
