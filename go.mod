@@ -1,4 +1,4 @@
-module github.com/andrewzuk/conform
+module github.com/leebenson/conform
 
 go 1.13
 
