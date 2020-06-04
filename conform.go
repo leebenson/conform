@@ -185,6 +185,41 @@ func formatName(s string) string {
 	return strings.Title(patterns["name"].FindString(first))
 }
 
+func getSliceElemType(t reflect.Type) reflect.Type {
+	var elType reflect.Type
+	if t.Kind() == reflect.Ptr {
+		elType = t.Elem().Elem()
+	} else {
+		elType = t.Elem()
+	}
+
+	return elType
+}
+
+func transformValue(tags string, val reflect.Value) reflect.Value {
+	if val.Kind() == reflect.Ptr && val.IsNil() {
+		return val
+	}
+
+	var oldStr string
+	if val.Kind() == reflect.Ptr {
+		oldStr = val.Elem().String()
+	} else {
+		oldStr = val.String()
+	}
+
+	newStr := transformString(oldStr, tags)
+
+	var newVal reflect.Value
+	if val.Kind() == reflect.Ptr {
+		newVal = reflect.ValueOf(&newStr)
+	} else {
+		newVal = reflect.ValueOf(newStr)
+	}
+
+	return newVal.Convert(val.Type())
+}
+
 // Strings conforms strings based on reflection tags
 func Strings(iface interface{}) error {
 	ifv := reflect.ValueOf(iface)
@@ -201,15 +236,23 @@ func Strings(iface interface{}) error {
 		switch el.Kind() {
 		case reflect.Slice:
 			if el.CanInterface() {
-				if slice, ok := el.Interface().([]string); ok {
-					for i, input := range slice {
-						tags := v.Tag.Get("conform")
-						slice[i] = transformString(input, tags)
+				elType := getSliceElemType(v.Type)
+
+				// allow strings and string pointers
+				str := ""
+				if elType.ConvertibleTo(reflect.TypeOf(str)) || elType.ConvertibleTo(reflect.TypeOf(&str)) {
+					tags := v.Tag.Get("conform")
+					for i := 0; i < el.Len(); i++ {
+						el.Index(i).Set(transformValue(tags, el.Index(i)))
 					}
 				} else {
 					val := reflect.ValueOf(el.Interface())
 					for i := 0; i < val.Len(); i++ {
-						Strings(val.Index(i).Addr().Interface())
+						elVal := val.Index(i)
+						if elVal.Kind() != reflect.Ptr {
+							elVal = elVal.Addr()
+						}
+						Strings(elVal.Interface())
 					}
 				}
 			}

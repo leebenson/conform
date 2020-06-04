@@ -622,3 +622,139 @@ func (t *testSuite) TestMap() {
 	assert.Equal("pickles", s.Catmap["cat1"].Name, "s.StructMap[cat1].Name should be trimmed")
 
 }
+
+func (t *testSuite) TestNilArrayPointerType() {
+	assert := assert.New(t.T())
+
+	type Post struct {
+		HashTags *[]string  `conform:"trim"`
+	}
+	p := Post{
+	}
+
+	Strings(&p)
+	assert.Nil(p.HashTags, 0)
+}
+
+func (t *testSuite) TestStringPointerArrayType() {
+	assert := assert.New(t.T())
+
+	type Post struct {
+		HashTags []*string  `conform:"trim"`
+	}
+	h := " hashtag "
+	p := Post{
+		HashTags: []*string{&h, nil},
+	}
+
+	Strings(&p)
+	assert.Len(p.HashTags, 2)
+	assert.Equal("hashtag", *p.HashTags[0])
+	assert.Nil(p.HashTags[1])
+}
+
+func (t *testSuite) TestStringArrayPointerType() {
+	assert := assert.New(t.T())
+
+	type Post struct {
+		HashTagsPtr *[]string `conform:"trim"`
+	}
+	h := " hashtag "
+	p := Post{
+		HashTagsPtr: &[]string{h},
+	}
+
+	Strings(&p)
+	assert.Len(*p.HashTagsPtr, 1)
+	assert.Equal("hashtag", (*p.HashTagsPtr)[0])
+}
+
+func (t *testSuite) TestStringPointerArrayPointerType() {
+	assert := assert.New(t.T())
+
+	type Post struct {
+		HashTagsPtr *[]*string `conform:"trim"`
+	}
+	h := " hashtag "
+	p := Post{
+		HashTagsPtr: &[]*string{&h, nil},
+	}
+
+	Strings(&p)
+	assert.Len(*p.HashTagsPtr, 2)
+	assert.Equal("hashtag", *(*p.HashTagsPtr)[0])
+	assert.Nil((*p.HashTagsPtr)[1])
+}
+
+func (t *testSuite) TestCustomStringPointerArrayType() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Post struct {
+		HashTags []*String  `conform:"trim"`
+	}
+	h := String(" hashtag ")
+	p := Post{
+		HashTags: []*String{&h, nil},
+	}
+
+	Strings(&p)
+	assert.Len(p.HashTags, 2)
+	assert.Equal(String("hashtag"), *p.HashTags[0])
+	assert.Nil(p.HashTags[1])
+}
+
+func (t *testSuite) TestCustomStringArrayPointerType() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Post struct {
+		HashTagsPtr *[]String `conform:"trim"`
+	}
+	h := String(" hashtag ")
+	p := Post{
+		HashTagsPtr: &[]String{h},
+	}
+
+	Strings(&p)
+	assert.Len(*p.HashTagsPtr, 1)
+	assert.Equal(String("hashtag"), (*p.HashTagsPtr)[0])
+}
+
+func (t *testSuite) TestCustomStringPointerArrayPointerType() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Post struct {
+		HashTagsPtr *[]*String `conform:"trim"`
+	}
+	h := String(" hashtag ")
+	p := Post{
+		HashTagsPtr: &[]*String{&h, nil},
+	}
+
+	Strings(&p)
+	assert.Len(*p.HashTagsPtr, 2)
+	assert.Equal(String("hashtag"), *(*p.HashTagsPtr)[0])
+	assert.Nil((*p.HashTagsPtr)[1])
+}
+
+func (t *testSuite) TestEmbeddedArrayOfStructs() {
+	assert := assert.New(t.T())
+
+	type Bar struct {
+		Baz string `conform:"trim"`
+	}
+	type Foo struct {
+		Bars *[]*Bar
+	}
+
+	f := Foo{
+		Bars: &[]*Bar{
+			{Baz: " baz "},
+		},
+	}
+
+	Strings(&f)
+	assert.Equal("baz", (*f.Bars)[0].Baz)
+}
