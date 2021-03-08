@@ -758,3 +758,24 @@ func (t *testSuite) TestEmbeddedArrayOfStructs() {
 	Strings(&f)
 	assert.Equal("baz", (*f.Bars)[0].Baz)
 }
+
+func (t *testSuite) TestEmbeddedArrayOfStructsWithIntSlice() {
+	assert := assert.New(t.T())
+
+	type Bar struct {
+		Baz string `conform:"trim"`
+		Bak []int64
+	}
+	type Foo struct {
+		Bars *[]*Bar
+	}
+
+	f := Foo{
+		Bars: &[]*Bar{
+			{Baz: " baz ", Bak: []int64{1, 2, 3},},
+		},
+	}
+
+	Strings(&f)
+	assert.Equal("baz", (*f.Bars)[0].Baz)
+}
