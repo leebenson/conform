@@ -240,7 +240,8 @@ func Strings(iface interface{}) error {
 
 				// allow strings and string pointers
 				str := ""
-				if elType.ConvertibleTo(reflect.TypeOf(str)) || elType.ConvertibleTo(reflect.TypeOf(&str)) {
+				if (elType.ConvertibleTo(reflect.TypeOf(str)) && reflect.TypeOf(str).ConvertibleTo(elType)) ||
+					(elType.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(elType) ) {
 					tags := v.Tag.Get("conform")
 					for i := 0; i < el.Len(); i++ {
 						el.Index(i).Set(transformValue(tags, el.Index(i)))
