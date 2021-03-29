@@ -627,10 +627,9 @@ func (t *testSuite) TestNilArrayPointerType() {
 	assert := assert.New(t.T())
 
 	type Post struct {
-		HashTags *[]string  `conform:"trim"`
+		HashTags *[]string `conform:"trim"`
 	}
-	p := Post{
-	}
+	p := Post{}
 
 	Strings(&p)
 	assert.Nil(p.HashTags, 0)
@@ -640,7 +639,7 @@ func (t *testSuite) TestStringPointerArrayType() {
 	assert := assert.New(t.T())
 
 	type Post struct {
-		HashTags []*string  `conform:"trim"`
+		HashTags []*string `conform:"trim"`
 	}
 	h := " hashtag "
 	p := Post{
@@ -691,7 +690,7 @@ func (t *testSuite) TestCustomStringPointerArrayType() {
 
 	type String string
 	type Post struct {
-		HashTags []*String  `conform:"trim"`
+		HashTags []*String `conform:"trim"`
 	}
 	h := String(" hashtag ")
 	p := Post{
@@ -772,10 +771,81 @@ func (t *testSuite) TestEmbeddedArrayOfStructsWithIntSlice() {
 
 	f := Foo{
 		Bars: &[]*Bar{
-			{Baz: " baz ", Bak: []int64{1, 2, 3},},
+			{Baz: " baz ", Bak: []int64{1, 2, 3}},
 		},
 	}
 
 	Strings(&f)
 	assert.Equal("baz", (*f.Bars)[0].Baz)
+}
+
+func (t *testSuite) TestTruncateStringLargerThanStringLength() {
+	assert := assert.New(t.T())
+
+	type Bar struct {
+		Baz string `conform:"truncate=10"`
+	}
+
+	f := Bar{
+		Baz: "12345678",
+	}
+
+	Strings(&f)
+	assert.Equal("12345678", f.Baz)
+}
+
+func (t *testSuite) TestTruncateStringShorterThanStringLength() {
+	assert := assert.New(t.T())
+
+	type Bar struct {
+		Baz string `conform:"truncate=5"`
+	}
+
+	f := Bar{
+		Baz: "12345678",
+	}
+
+	Strings(&f)
+	assert.Equal("12345", f.Baz)
+}
+
+func (t *testSuite) TestTruncateStringEqualToStringLength() {
+	assert := assert.New(t.T())
+
+	type Bar struct {
+		Baz string `conform:"truncate=8"`
+	}
+
+	f := Bar{
+		Baz: "12345678",
+	}
+
+	Strings(&f)
+	assert.Equal("12345678", f.Baz)
+}
+
+func (t *testSuite) TestTruncateStringNestedStruct() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Post struct {
+		Name struct {
+			People string `conform:"truncate=5"`
+		}
+		HashTagsPtr *[]String `conform:"truncate=1"`
+	}
+	h := String(" hashtag ")
+	p := Post{
+		Name: struct {
+			People string `conform:"truncate=5"`
+		}{
+			People: "1234567890",
+		},
+		HashTagsPtr: &[]String{h},
+	}
+
+	Strings(&p)
+	assert.Len(*p.HashTagsPtr, 1)
+	assert.Equal(String(" "), (*p.HashTagsPtr)[0])
+	assert.Equal("12345", p.Name.People)
 }

@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -27,6 +28,8 @@ var patterns = map[string]*regexp.Regexp{
 	"nonAlpha":   regexp.MustCompile("[^\\pL]"),
 	"name":       regexp.MustCompile("[\\p{L}]([\\p{L}|[:space:]|\\-|\\']*[\\p{L}])*"),
 }
+
+var truncateRegex = regexp.MustCompile(`^truncate=([0-9]+)$`)
 
 // a valid email will only have one "@", but let's treat the last "@" as the domain part separator
 func emailLocalPart(s string) string {
@@ -241,7 +244,7 @@ func Strings(iface interface{}) error {
 				// allow strings and string pointers
 				str := ""
 				if (elType.ConvertibleTo(reflect.TypeOf(str)) && reflect.TypeOf(str).ConvertibleTo(elType)) ||
-					(elType.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(elType) ) {
+					(elType.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(elType)) {
 					tags := v.Tag.Get("conform")
 					for i := 0; i < el.Len(); i++ {
 						el.Index(i).Set(transformValue(tags, el.Index(i)))
@@ -335,6 +338,12 @@ func transformString(input, tags string) string {
 		case "!js":
 			input = template.JSEscapeString(input)
 		default:
+			if truncateParam := truncateRegex.FindString(split); truncateParam != "" {
+				l, err := strconv.ParseInt(strings.TrimLeft(truncateParam, "truncate="), 10, 32)
+				if err == nil && len(input) >= int(l) {
+					input = input[:l]
+				}
+			}
 			if s, ok := sanitizers[split]; ok {
 				input = s(input)
 			}
