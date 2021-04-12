@@ -340,8 +340,9 @@ func transformString(input, tags string) string {
 		default:
 			if truncateParam := truncateRegex.FindString(split); truncateParam != "" {
 				l, err := strconv.ParseInt(strings.TrimLeft(truncateParam, "truncate="), 10, 32)
-				if err == nil && len(input) >= int(l) {
-					input = input[:l]
+				if err == nil && utf8.RuneCountInString(input) >= int(l) {
+					r := []rune(input)
+					return string(r[:l])
 				}
 			}
 			if s, ok := sanitizers[split]; ok {

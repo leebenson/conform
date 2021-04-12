@@ -813,15 +813,15 @@ func (t *testSuite) TestTruncateStringEqualToStringLength() {
 	assert := assert.New(t.T())
 
 	type Bar struct {
-		Baz string `conform:"truncate=8"`
+		Baz string `conform:"truncate=3"`
 	}
 
 	f := Bar{
-		Baz: "12345678",
+		Baz: "abcde",
 	}
 
 	Strings(&f)
-	assert.Equal("12345678", f.Baz)
+	assert.Equal("abc", f.Baz)
 }
 
 func (t *testSuite) TestTruncateStringNestedStruct() {
@@ -848,4 +848,30 @@ func (t *testSuite) TestTruncateStringNestedStruct() {
 	assert.Len(*p.HashTagsPtr, 1)
 	assert.Equal(String(" "), (*p.HashTagsPtr)[0])
 	assert.Equal("12345", p.Name.People)
+}
+
+func (t *testSuite) TestTruncateUnicodeString() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Post struct {
+		Name struct {
+			People string `conform:"truncate=5"`
+		}
+		HashTagsPtr *[]String `conform:"truncate=6"`
+	}
+	p := Post{
+		Name: struct {
+			People string `conform:"truncate=5"`
+		}{
+			People: "สวัสดีคนไทย",
+		},
+		HashTagsPtr: &[]String{String(" hashtag "), String("เราจะทำตามสัญญา")},
+	}
+
+	Strings(&p)
+	assert.Len(*p.HashTagsPtr, 2)
+	assert.Equal(String(" hasht"), (*p.HashTagsPtr)[0])
+	assert.Equal("สวัสด", p.Name.People)
+	assert.Equal(String("เราจะท"), (*p.HashTagsPtr)[1])
 }
