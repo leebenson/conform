@@ -870,7 +870,7 @@ func (t *testSuite) TestTruncateUnicodeString() {
 	}
 
 	Strings(&p)
-	assert.Len(*p.HashTagsPtr, 2)
+	assert.Len(*p.HashTagsPtr, 5)
 	assert.Equal(String(" hasht"), (*p.HashTagsPtr)[0])
 	assert.Equal("สวัสด", p.Name.People)
 	assert.Equal(String("เราจะท"), (*p.HashTagsPtr)[1])
