@@ -2,7 +2,7 @@
 
 Trim, sanitize, and modify struct string fields in place, based on tags.
 
-**Update Jan 12, 2016 -- Now also works with embedded structs**
+**Now also works with embedded structs**
 
 Turns this...
 
@@ -192,7 +192,7 @@ Trims, strips numbers and special characters (except dashes and spaces separatin
 
 ### email
 ---------------------------------------
-Trims and lowercases the string.  Example: `"UNSIGHTLY-EMAIL@EXamPLE.com "` -> `"unsightly-email@example.com"`
+Trims and lowercases the domain portion of the string.  Example: `"UNSIGHTLY-EMAIL@EXamPLE.com "` -> `"UNSIGHTLY-EMAIL@example.com"`
 
 ### num
 ---------------------------------------
