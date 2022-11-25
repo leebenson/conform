@@ -627,10 +627,9 @@ func (t *testSuite) TestNilArrayPointerType() {
 	assert := assert.New(t.T())
 
 	type Post struct {
-		HashTags *[]string  `conform:"trim"`
+		HashTags *[]string `conform:"trim"`
 	}
-	p := Post{
-	}
+	p := Post{}
 
 	Strings(&p)
 	assert.Nil(p.HashTags, 0)
@@ -640,7 +639,7 @@ func (t *testSuite) TestStringPointerArrayType() {
 	assert := assert.New(t.T())
 
 	type Post struct {
-		HashTags []*string  `conform:"trim"`
+		HashTags []*string `conform:"trim"`
 	}
 	h := " hashtag "
 	p := Post{
@@ -691,7 +690,7 @@ func (t *testSuite) TestCustomStringPointerArrayType() {
 
 	type String string
 	type Post struct {
-		HashTags []*String  `conform:"trim"`
+		HashTags []*String `conform:"trim"`
 	}
 	h := String(" hashtag ")
 	p := Post{
@@ -772,10 +771,23 @@ func (t *testSuite) TestEmbeddedArrayOfStructsWithIntSlice() {
 
 	f := Foo{
 		Bars: &[]*Bar{
-			{Baz: " baz ", Bak: []int64{1, 2, 3},},
+			{Baz: " baz ", Bak: []int64{1, 2, 3}},
 		},
 	}
 
 	Strings(&f)
 	assert.Equal("baz", (*f.Bars)[0].Baz)
+}
+
+func (t *testSuite) TestStructsWithIntSlice() {
+
+	type Bar struct {
+		Bak []int64
+	}
+
+	f := Bar{
+		[]int64{1, 2, 3},
+	}
+
+	Strings(&f)
 }
