@@ -193,6 +193,10 @@ func getSliceElemType(t reflect.Type) reflect.Type {
 		elType = t.Elem()
 	}
 
+	if elType.Kind() == reflect.Ptr {
+		elType = elType.Elem()
+	}
+
 	return elType
 }
 
@@ -239,9 +243,7 @@ func Strings(iface interface{}) error {
 				elType := getSliceElemType(v.Type)
 
 				// allow strings and string pointers
-				str := ""
-				if (elType.ConvertibleTo(reflect.TypeOf(str)) && reflect.TypeOf(str).ConvertibleTo(elType)) ||
-					(elType.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(elType) ) {
+				if elType.Kind() == reflect.String {
 					tags := v.Tag.Get("conform")
 					for i := 0; i < el.Len(); i++ {
 						el.Index(i).Set(transformValue(tags, el.Index(i)))
