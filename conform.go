@@ -220,6 +220,12 @@ func transformValue(tags string, val reflect.Value) reflect.Value {
 	return newVal.Convert(val.Type())
 }
 
+func isStringLike(t reflect.Type) bool {
+	str := ""
+	return (t.ConvertibleTo(reflect.TypeOf(str)) && reflect.TypeOf(str).ConvertibleTo(t)) ||
+		(t.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(t))
+}
+
 // Strings conforms strings based on reflection tags
 func Strings(iface interface{}) error {
 	ifv := reflect.ValueOf(iface)
@@ -239,9 +245,7 @@ func Strings(iface interface{}) error {
 				elType := getSliceElemType(v.Type)
 
 				// allow strings and string pointers
-				str := ""
-				if (elType.ConvertibleTo(reflect.TypeOf(str)) && reflect.TypeOf(str).ConvertibleTo(elType)) ||
-					(elType.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(elType) ) {
+				if isStringLike(elType) {
 					tags := v.Tag.Get("conform")
 					for i := 0; i < el.Len(); i++ {
 						el.Index(i).Set(transformValue(tags, el.Index(i)))
@@ -259,15 +263,26 @@ func Strings(iface interface{}) error {
 			}
 		case reflect.Map:
 			if el.CanInterface() {
-				val := reflect.ValueOf(el.Interface())
-				for _, key := range val.MapKeys() {
-					mapValue := val.MapIndex(key)
-					mapValuePtr := reflect.New(mapValue.Type())
-					mapValuePtr.Elem().Set(mapValue)
-					if mapValuePtr.Elem().CanAddr() {
-						Strings(mapValuePtr.Elem().Addr().Interface())
+				elType := getSliceElemType(v.Type)
+
+				// allow strings and string pointers
+				if isStringLike(elType) {
+					tags := v.Tag.Get("conform")
+					val := reflect.ValueOf(el.Interface())
+					for _, key := range val.MapKeys() {
+						el.SetMapIndex(key, transformValue(tags, el.MapIndex(key)))
 					}
-					val.SetMapIndex(key, reflect.Indirect(mapValuePtr))
+				} else {
+					val := reflect.ValueOf(el.Interface())
+					for _, key := range val.MapKeys() {
+						mapValue := val.MapIndex(key)
+						mapValuePtr := reflect.New(mapValue.Type())
+						mapValuePtr.Elem().Set(mapValue)
+						if mapValuePtr.Elem().CanAddr() {
+							Strings(mapValuePtr.Elem().Addr().Interface())
+						}
+						val.SetMapIndex(key, reflect.Indirect(mapValuePtr))
+					}
 				}
 			}
 		case reflect.Struct:
