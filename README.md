@@ -2,11 +2,11 @@
 
 Trim, sanitize, and modify struct string fields in place, based on tags.
 
-**Now also works with embedded structs, slices of strings and maps of strings**
+**Now also works with embedded structs**
 
 Turns this...
 
-```go
+``` go
 type Person struct {
 	FirstName string `conform:"name"`
 	LastName  string `conform:"ucfirst,trim"`
@@ -18,7 +18,7 @@ type Person struct {
 	Left      string `conform:"ltrim"`
 	Right     string `conform:"rtrim"`
 
-	Skills   []string          `conform:"upper"`
+ 	Skills   []string          `conform:"upper"`
 	Examples map[string]string `conform:"!html"`
 }
 
@@ -40,7 +40,7 @@ p1 := Person{
 
 Into this...
 
-```go
+``` go
 p2 := p1 // <-- copy the Person struct into a new one, to see the difference
 conform.Strings(&p2) // <-- this does the work
 
@@ -60,7 +60,6 @@ conform.Strings(&p2) // <-- this does the work
 	Examples: { '<best>': '<body><p>I know this & that.</p></body>' } -> { '<best>': '&lt;body&gt;&lt;p&gt;I know this &amp; that.&lt;/p&gt;&lt;/body&gt;' }
 */
 ```
-
 **Note: No map keys are changed.**
 
 ## Why?
@@ -91,7 +90,7 @@ To format in place, pass your struct pointer to `conform.Strings`.
 
 Here's an example that formats e-mail addresses:
 
-```go
+``` go
 package main
 
 import (
@@ -117,7 +116,7 @@ func main() {
 
 Just add a `conform` tag along with your Gorilla `schema` tags:
 
-```go
+``` go
 // ...
 
 import (
@@ -148,7 +147,6 @@ func ProcessNewUser(r *http.Request) error {
 ```
 
 ## Godoc
-
 See the [public API / exported methods on Godoc](https://godoc.org/github.com/leebenson/conform).
 
 ## Tags
@@ -156,117 +154,82 @@ See the [public API / exported methods on Godoc](https://godoc.org/github.com/le
 You can use multiple tags in the format of `conform:"tag1,tag2"`
 
 ### trim
-
----
-
+---------------------------------------
 Trims leading and trailing spaces. Example: `"   string   "` -> `"string"`
 
 ### ltrim
-
----
-
+---------------------------------------
 Trims leading spaces only. Example: `"   string   "` -> `"string   "`
 
 ### rtrim
-
----
-
+---------------------------------------
 Trims trailing spaces only. Example: `"   string   "` -> `"   string"`
 
 ### lower
-
----
-
+---------------------------------------
 Converts string to lowercase. Example: `"STRING"` -> `"string"`
 
 ### upper
-
----
-
+---------------------------------------
 Converts string to uppercase. Example: `"string"` -> `"STRING"`
 
 ### title
-
----
-
+---------------------------------------
 Converts string to Title Case, e.g. `"this is a sentence"` -> `"This Is A Sentence"`
 
 ### camel
-
----
-
+---------------------------------------
 Converts to camel case via [stringUp](https://github.com/etgryphon/stringUp), Example provided by library: `this is it => thisIsIt, this\_is\_it => thisIsIt, this-is-it => thisIsIt`
 
 ### snake
-
----
-
+---------------------------------------
 Converts to snake_case. Example: `"CamelCase"` -> `"camel_case"`, `"regular string"` -> `"regular_string"`
 Special thanks to [snaker](https://github.com/serenize/snaker/) for inspiration (credited in license)
 
 ### slug
-
----
-
-Turns strings into slugs. Example: `"CamelCase"` -> `"camel-case"`, `"blog title here"` -> `"blog-title-here"`
+---------------------------------------
+Turns strings into slugs.  Example: `"CamelCase"` -> `"camel-case"`, `"blog title here"` -> `"blog-title-here"`
 
 ### ucfirst
-
----
-
-Uppercases first character. Example: `"all lower"` -> `"All lower"`
+---------------------------------------
+Uppercases first character.  Example: `"all lower"` -> `"All lower"`
 
 ### name
-
----
-
+---------------------------------------
 Trims, strips numbers and special characters (except dashes and spaces separating names), converts multiple spaces and dashes to single characters, title cases multiple names. Example: `"3493€848Jo-s$%£@Ann   "` -> `"Jo-Ann"`, `"  ~~  The       Dude ~~"` -> `"The Dude"`, `"**susan**"` -> `"Susan"`, `"    hugh fearnley-whittingstall"` -> `"Hugh Fearnley-Whittingstall"`
 
 ### email
-
----
-
-Trims and lowercases the domain portion of the string. Example: `"UNSIGHTLY-EMAIL@EXamPLE.com "` -> `"UNSIGHTLY-EMAIL@example.com"`
+---------------------------------------
+Trims and lowercases the domain portion of the string.  Example: `"UNSIGHTLY-EMAIL@EXamPLE.com "` -> `"UNSIGHTLY-EMAIL@example.com"`
 
 ### num
-
----
-
+---------------------------------------
 Removes all non-numeric characters. Example: `"the price is €30,38"` -> `"3038"`
 
 _Note: The struct field will remain a string. No type conversion takes place._
 
 ### !num
-
----
-
+---------------------------------------
 Removes all numbers. Example `"39472349D34a34v69e8932747"` -> `"Dave"`
 
 ### alpha
-
----
-
+---------------------------------------
 Removes non-alpha unicode characters. Example: `"!@£$%^&'()Hello 1234567890 World+[];\"` -> `"HelloWorld"`
 
 ### !alpha
-
----
-
+---------------------------------------
 Removes alpha unicode characters. Example: `"Everything's here but the letters!"` -> `"'    !"`
 
 ### !html
+---------------------------------------
 
----
-
-Escapes HTML so that it is safe for display. Characters are substituted by their respective HTML codes. Internally uses template.HTMLEscapeString.
+Escapes HTML so that it is safe for display. Characters are substituted by their respective HTML codes. Internally uses _template.HTMLEscapeString_.
 Example: `"' " & < > \000"` -> `"&#39; &#34; &amp; &lt; &gt; \uFFFD"`
 
 ### !js
+---------------------------------------
 
----
-
-Escapes JavaScript. Internally uses template.JSEscapeString. Example: `"\ ' " < > & ="` -> `"\\ \' \u003C \u003E \u0026 \u003D"`
+Escapes JavaScript. Internally uses _template.JSEscapeString_. Example: `"\ ' " < > & ="` -> `"\\ \' \u003C \u003E \u0026 \u003D"`
 
 ### LICENSE
-
 [MIT](https://github.com/leebenson/conform/blob/master/LICENSE)
