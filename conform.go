@@ -243,6 +243,9 @@ func Strings(iface interface{}) error {
 				if (elType.ConvertibleTo(reflect.TypeOf(str)) && reflect.TypeOf(str).ConvertibleTo(elType)) ||
 					(elType.ConvertibleTo(reflect.TypeOf(&str)) && reflect.TypeOf(&str).ConvertibleTo(elType) ) {
 					tags := v.Tag.Get("conform")
+					if len(tags) <= 0 {
+						continue
+					}
 					for i := 0; i < el.Len(); i++ {
 						el.Index(i).Set(transformValue(tags, el.Index(i)))
 					}
