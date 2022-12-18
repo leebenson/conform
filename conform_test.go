@@ -623,14 +623,57 @@ func (t *testSuite) TestMap() {
 
 }
 
+func (t *testSuite) TestCustomStringMap() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Bear struct {
+		HashMap map[string]String `conform:"trim"`
+	}
+	h := String(" hashtag ")
+	s := Bear{
+		HashMap: map[string]String{
+			"h1": h,
+			"h2": String(""),
+		},
+	}
+
+	Strings(&s)
+	assert.Len(s.HashMap, 2)
+	assert.Equal(String("hashtag"), (s.HashMap)["h1"], "s.HashMap[h1] should be trimmed")
+	assert.Equal(String(""), (s.HashMap)["h2"], "s.HashMap[h2] should be empty")
+
+}
+
+func (t *testSuite) TestCustomStringPointerMapPointerType() {
+	assert := assert.New(t.T())
+
+	type String string
+	type Bear struct {
+		HashMap *map[string]*String `conform:"trim"`
+	}
+	h := String(" hashtag ")
+	s := Bear{
+		HashMap: &map[string]*String{
+			"h1": &h,
+			"h2": nil,
+		},
+	}
+
+	Strings(&s)
+	assert.Len(*s.HashMap, 2)
+	assert.Equal(String("hashtag"), *(*s.HashMap)["h1"], "s.HashMap[h1] should be trimmed")
+	assert.Nil((*s.HashMap)["h2"], "s.HashMap[h1] should be nil")
+
+}
+
 func (t *testSuite) TestNilArrayPointerType() {
 	assert := assert.New(t.T())
 
 	type Post struct {
-		HashTags *[]string  `conform:"trim"`
+		HashTags *[]string `conform:"trim"`
 	}
-	p := Post{
-	}
+	p := Post{}
 
 	Strings(&p)
 	assert.Nil(p.HashTags, 0)
@@ -640,7 +683,7 @@ func (t *testSuite) TestStringPointerArrayType() {
 	assert := assert.New(t.T())
 
 	type Post struct {
-		HashTags []*string  `conform:"trim"`
+		HashTags []*string `conform:"trim"`
 	}
 	h := " hashtag "
 	p := Post{
@@ -691,7 +734,7 @@ func (t *testSuite) TestCustomStringPointerArrayType() {
 
 	type String string
 	type Post struct {
-		HashTags []*String  `conform:"trim"`
+		HashTags []*String `conform:"trim"`
 	}
 	h := String(" hashtag ")
 	p := Post{
@@ -772,7 +815,7 @@ func (t *testSuite) TestEmbeddedArrayOfStructsWithIntSlice() {
 
 	f := Foo{
 		Bars: &[]*Bar{
-			{Baz: " baz ", Bak: []int64{1, 2, 3},},
+			{Baz: " baz ", Bak: []int64{1, 2, 3}},
 		},
 	}
 

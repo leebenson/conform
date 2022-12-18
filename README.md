@@ -17,6 +17,9 @@ type Person struct {
 	Blurb     string `conform:"title"`
 	Left      string `conform:"ltrim"`
 	Right     string `conform:"rtrim"`
+
+ 	Skills   []string          `conform:"upper"`
+	Examples map[string]string `conform:"!html"`
 }
 
 p1 := Person{
@@ -29,6 +32,8 @@ p1 := Person{
 	"this is a little bit about me...",
 	"    Left trim   ",
 	"    Right trim  ",
+	[]string{"HtmL", "Yaml"},
+	map[string]string{"<best>":"<body><p>I know this & that.</p></body>"},
 }
 
 ```
@@ -50,9 +55,12 @@ conform.Strings(&p2) // <-- this does the work
 	Slug: 'LeeBensonWasHere' -> 'lee-benson-was-here'
 	Blurb: 'this is a little bit about me...' -> 'This Is A Little Bit About Me...'
 	Left: '    Left trim   ' -> 'Left trim   '
-	Right: '    Right trim  ' -> '    Right trim'
+	Right: '    Right trim  ' -> '    Right trim',
+	Skills: { 'HtmL', 'Yaml' } -> { 'HTML', 'YAML' },
+	Examples: { '<best>': '<body><p>I know this & that.</p></body>' } -> { '<best>': '&lt;body&gt;&lt;p&gt;I know this &amp; that.&lt;/p&gt;&lt;/body&gt;' }
 */
 ```
+**Note: No map keys are changed.**
 
 ## Why?
 
@@ -211,6 +219,17 @@ Removes non-alpha unicode characters. Example: `"!@£$%^&'()Hello 1234567890 Wor
 ### !alpha
 ---------------------------------------
 Removes alpha unicode characters. Example: `"Everything's here but the letters!"` -> `"'    !"`
+
+### !html
+---------------------------------------
+
+Escapes HTML so that it is safe for display. Characters are substituted by their respective HTML codes. Internally uses _template.HTMLEscapeString_.
+Example: `"' " & < > \000"` -> `"&#39; &#34; &amp; &lt; &gt; \uFFFD"`
+
+### !js
+---------------------------------------
+
+Escapes JavaScript. Internally uses _template.JSEscapeString_. Example: `"\ ' " < > & ="` -> `"\\ \' \u003C \u003E \u0026 \u003D"`
 
 ### LICENSE
 [MIT](https://github.com/leebenson/conform/blob/master/LICENSE)
