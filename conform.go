@@ -247,6 +247,9 @@ func Strings(iface interface{}) error {
 				// allow strings and string pointers
 				if isStringLike(elType) {
 					tags := v.Tag.Get("conform")
+					if len(tags) <= 0 {
+						continue
+					}
 					for i := 0; i < el.Len(); i++ {
 						el.Index(i).Set(transformValue(tags, el.Index(i)))
 					}
