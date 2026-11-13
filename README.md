@@ -82,7 +82,7 @@ And import in the usual way in your Go app:
 
 `import "github.com/leebenson/conform"`
 
-Add a `conform` tag to your structs, for all of the string fields that you want Conform to transform. Add the name of the transform (known as the "tag") in double quotes, and separate multiple tags with commas. Example: `conform:"trim,lowercase"`
+Add a `conform` tag to your structs, for all of the string fields that you want Conform to transform. Add the name of the transform (known as the "tag") in double quotes, and separate multiple tags with commas. Example: `conform:"trim,lower"`
 
 To format in place, pass your struct pointer to `conform.Strings`.
 
